@@ -1,14 +1,14 @@
 {
-  "name": "react-scripts",
-  "version": "1.1.4",
+  "name": "@vallarj/react-scripts",
+  "version": "1.0",
   "description": "Configuration and scripts for Create React App.",
-  "repository": "facebookincubator/create-react-app",
+  "repository": "vallarj/create-react-app",
   "license": "MIT",
   "engines": {
     "node": ">=6"
   },
   "bugs": {
-    "url": "https://github.com/facebookincubator/create-react-app/issues"
+    "url": "https://github.com/vallarj/create-react-app/issues"
   },
   "files": [
     "bin",
