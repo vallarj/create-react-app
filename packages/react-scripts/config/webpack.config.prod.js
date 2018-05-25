@@ -54,6 +54,23 @@ const extractTextPluginOptions = shouldUseRelativeAssetPaths
     { publicPath: Array(cssFilename.split('/').length).join('../') }
   : {};
 
+// Now we resolve the package alias
+const fs = require('fs');
+const appDirectory = fs.realpathSync(process.cwd());
+const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+
+// Package alias
+const packageAlias = process.env.REACT_APP_PACKAGE_ALIAS || '@';
+
+// Alias directory
+const aliasDirectory = resolveApp(
+  process.env.REACT_APP_ALIAS_DIRECTORY || 'src'
+);
+
+// Set-up alias object
+var _alias = {};
+_alias[packageAlias] = aliasDirectory;
+
 // This is the production configuration.
 // It compiles slowly and is focused on producing a fast and minimal bundle.
 // The development configuration is different and lives in a separate file.
@@ -97,27 +114,30 @@ module.exports = {
     // `web` extension prefixes have been added for better support
     // for React Native Web.
     extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx'],
-    alias: {
-      // @remove-on-eject-begin
-      // Resolve Babel runtime relative to react-scripts.
-      // It usually still works on npm 3 without this but it would be
-      // unfortunate to rely on, as react-scripts could be symlinked,
-      // and thus babel-runtime might not be resolvable from the source.
-      'babel-runtime': path.dirname(
-        require.resolve('babel-runtime/package.json')
-      ),
-      // @remove-on-eject-end
-      // Support React Native Web
-      // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
-      'react-native': 'react-native-web',
-    },
+    alias: Object.assign(
+      {
+        // @remove-on-eject-begin
+        // Resolve Babel runtime relative to react-scripts.
+        // It usually still works on npm 3 without this but it would be
+        // unfortunate to rely on, as react-scripts could be symlinked,
+        // and thus babel-runtime might not be resolvable from the source.
+        'babel-runtime': path.dirname(
+          require.resolve('babel-runtime/package.json')
+        ),
+        // @remove-on-eject-end
+        // Support React Native Web
+        // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
+        'react-native': 'react-native-web',
+      },
+      _alias
+    ),
     plugins: [
       // Prevents users from importing files from outside of src/ (or node_modules/).
       // This often causes confusion because we only process files within src/ with babel.
       // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
       // please link the files into your node_modules/ and let module-resolution kick in.
       // Make sure your source files are compiled, as they will not be processed in any way.
-      new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]),
+      // new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]),
     ],
   },
   module: {
